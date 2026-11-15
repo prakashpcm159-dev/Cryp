@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="A simple live cryptocurrency dashboard built with Vanilla JavaScript and Tailwind CSS.">
+  <title>CryptoView — Market Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/Responsive.css">
+</head>
+
+<body class="min-h-screen bg-slate-950 text-slate-100">
+  <header class="border-b border-slate-800 bg-slate-950/90">
+    <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-5 sm:px-6 lg:px-8">
+      <a href="#" class="text-xl font-extrabold tracking-tight sm:text-2xl">Crypto<span
+          class="text-cyan-400">View</span></a>
+      <div class="flex items-center gap-2">
+        <button id="currencyButton"
+          class="rounded-xl border border-slate-700 px-3 py-2 text-sm font-semibold hover:bg-slate-800"
+          type="button">Currency: USD</button>
+        <button id="themeButton"
+          class="rounded-xl border border-slate-700 px-3 py-2 text-sm font-semibold hover:bg-slate-800" type="button"
+          aria-label="Toggle light mode">☼</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <section class="mb-8 flex flex-col justify-between gap-5 md:flex-row md:items-end">
+      <div>
+        <p class="mb-2 text-sm font-semibold uppercase tracking-[0.2em] text-cyan-400">Market overview</p>
+        <h1 class="text-3xl font-black tracking-tight sm:text-4xl">Crypto Market</h1>
+        <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-400 sm:text-base">Track the top 20 cryptocurrencies,
+          prices, 24-hour movement and market capitalization.</p>
+      </div>
+      <button id="refreshButton" type="button"
+        class="rounded-xl bg-cyan-400 px-5 py-3 font-bold text-slate-950 transition hover:bg-cyan-300 active:scale-95 disabled:cursor-not-allowed disabled:opacity-60">
+        ↻ <span id="refreshText">Refresh prices</span>
+      </button>
+    </section>
+
+    <section class="mb-6 grid gap-4 sm:grid-cols-3">
+      <article class="rounded-2xl border border-slate-800 bg-slate-900 p-5">
+        <p class="text-sm text-slate-400">Coins shown</p>
+        <p id="coinCount" class="mt-2 text-2xl font-bold">—</p>
+      </article>
+      <article class="rounded-2xl border border-slate-800 bg-slate-900 p-5">
+        <p class="text-sm text-slate-400">Favorites</p>
+        <p id="favoriteCount" class="mt-2 text-2xl font-bold">0</p>
+      </article>
+      <article class="rounded-2xl border border-slate-800 bg-slate-900 p-5">
+        <p class="text-sm text-slate-400">Last updated</p>
+        <p id="lastUpdated" class="mt-2 text-lg font-bold">Not yet</p>
+      </article>
+    </section>
+
+    <section class="rounded-2xl border border-slate-800 bg-slate-900">
+      <div
+        class="flex flex-col gap-4 border-b border-slate-800 p-4 sm:p-5 lg:flex-row lg:items-center lg:justify-between">
+        <label class="relative block w-full lg:max-w-sm">
+          <span class="sr-only">Search coins</span>
+          <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">⌕</span>
+          <input id="searchInput" type="search" placeholder="Search name or symbol..."
+            class="w-full rounded-xl border border-slate-700 bg-slate-950 py-3 pl-9 pr-4 text-sm outline-none transition placeholder:text-slate-500 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20">
+        </label>
+        <div class="flex flex-wrap gap-2">
+          <button class="filterButton rounded-lg bg-cyan-400 px-3 py-2 text-sm font-bold text-slate-950"
+            data-filter="all" type="button">All coins</button>
+          <button
+            class="filterButton rounded-lg border border-slate-700 px-3 py-2 text-sm font-semibold text-slate-300 hover:bg-slate-800"
+            data-filter="favorites" type="button">★ Favorites</button>
+          <label class="flex items-center gap-2 rounded-lg border border-slate-700 px-3 py-2 text-sm text-slate-300">
+            Sort:
+            <select id="sortSelect" class="bg-transparent text-slate-100 outline-none">
+              <option value="rank" class="bg-slate-900">Rank</option>
+              <option value="price" class="bg-slate-900">Price</option>
+              <option value="change" class="bg-slate-900">24h change</option>
+              <option value="marketCap" class="bg-slate-900">Market cap</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <div id="statusArea" class="hidden p-6" role="status" aria-live="polite"></div>
+
+      <div id="tableWrap" class="overflow-x-auto">
+        <table class="w-full min-w-[760px] text-left">
+          <thead class="bg-slate-950/70 text-xs uppercase tracking-wider text-slate-500">
+            <tr>
+              <th class="px-5 py-4 font-semibold"># / Coin</th>
+              <th class="px-5 py-4 text-right font-semibold">Price</th>
+              <th class="px-5 py-4 text-right font-semibold">24h change</th>
+              <th class="px-5 py-4 text-right font-semibold">Market cap</th>
+              <th class="px-5 py-4 text-center font-semibold">Watchlist</th>
+            </tr>
+          </thead>
+          <tbody id="coinList" class="divide-y divide-slate-800"></tbody>
+        </table>
+      </div>
+      <p class="border-t border-slate-800 px-5 py-4 text-xs leading-5 text-slate-500">Data provided by CoinGecko. Market
+        data can change quickly and is shown for learning purposes only.</p>
+    </section>
+  </main>
+
+  <footer class="mx-auto max-w-7xl px-4 pb-8 text-center text-xs text-slate-500 sm:px-6 lg:px-8">
+    Built with Vanilla JavaScript and Tailwind CSS · Educational demo, not financial advice.
+  </footer>
+
+  <script src="js/api.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+</body>
+
+</html>
