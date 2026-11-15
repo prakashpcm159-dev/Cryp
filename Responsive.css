@@ -1,0 +1,45 @@
+/* Responsive.css: small responsive fixes; Tailwind handles most layout styles. */
+
+@media (max-width: 640px) {
+  main {
+    padding-top: 1.25rem;
+  }
+
+  #refreshButton {
+    width: 100%;
+  }
+
+  #currencyButton,
+  #themeButton {
+    padding: 0.5rem 0.65rem;
+    font-size: 0.75rem;
+  }
+
+  #tableWrap {
+    margin-inline: -0.25rem;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1023px) {
+  #tableWrap {
+    border-radius: 0.75rem;
+  }
+}
+
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
